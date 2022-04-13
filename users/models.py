@@ -1,6 +1,6 @@
 from django.contrib.auth.models import AbstractUser
-from django.db import models
 from django.conf import settings
+from datetime import datetime, timedelta, timezone
 from jwt import encode
 
 
@@ -10,7 +10,12 @@ class CustomUser(AbstractUser):
         return self.__get_token()
 
     def __get_token(self):
-        data = { 'id': self.pk }
+        current_time = datetime.now(tz=timezone.utc)
+        data = {
+            'id': self.pk,
+            'iat': current_time,
+            'exp': current_time + timedelta(minutes=15)
+        }
         return encode(data, settings.SECRET_KEY)
 
     @property
