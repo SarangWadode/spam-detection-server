@@ -1,5 +1,6 @@
 from django.contrib.auth import get_user_model
 from django.db import models
+from .utils import create_json
 
 
 User = get_user_model()
@@ -15,6 +16,12 @@ class Product(models.Model):
         Image: {self.image}
         {self.description}
         '''
+
+    @classmethod
+    def get_products(cls, query='', start=0, count=10):
+        result_query = models.Q(name__icontains=query) | models.Q(description__icontains=query)
+        filtered_products = cls.objects.filter(result_query)[start:start + count].values()
+        return create_json(filtered_products, start)
 
 
 class Comment(models.Model):
