@@ -62,6 +62,14 @@ def add_comment(request: HttpRequest, pk: int) -> JsonResponse:
         current_active.update(deleted=True, deletion_reason=f'Multiple {blob[0]} reviews on Product {product.id}')
         return JsonResponse({ 'error': 'Your reviews has been deleted due to violation of max reviews' })
 
+    count, unverified = request.user.unverified_comment_count
+    if count == settings.LIMIT_UNORDERED_REVIEWS:
+        for c in unverified:
+            c.deletion_reason = 'Multiple reviews without buying the product'
+            c.deleted = True
+            c.save()
+        return JsonResponse({ 'error': 'Multiple unverified comments found.' })
+
     return JsonResponse({ 'success': 'Comment added successfully' })
 
 def comments(request: HttpRequest, pk: int) -> JsonResponse:
