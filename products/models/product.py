@@ -19,7 +19,9 @@ class Product(models.Model):
 
     @property
     def as_json(self):
-        comments = self.comment_set.get_queryset().select_related()[0:5]\
+        comments = self.comment_set.get_queryset()\
+            .filter(deleted=False, not_spam=False)\
+            .select_related()[0:5]\
             .values('user__username', 'text', 'sentiment', 'confidence', 'date_posted')
         return { 
             'title': self.name,

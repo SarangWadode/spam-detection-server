@@ -9,6 +9,8 @@ SECRET_KEY = environ.get('SPAM_DJANGO_SECRET_KEY', 'django-insecure-cdp7^pmzk&8h
 
 DEBUG = True
 ALLOWED_HOSTS = []
+MAX_REVIEWS = 3
+LIMIT_UNORDERED_REVIEWS = 4
 
 
 # Application definition

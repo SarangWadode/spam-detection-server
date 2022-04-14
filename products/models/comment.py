@@ -13,6 +13,9 @@ class Comment(models.Model):
     confidence = models.FloatField(verbose_name='Confidence of predicted sentiment', blank=True, null=True)
     text = models.TextField()
     date_posted = models.DateTimeField(auto_now_add=True)
+    deleted = models.BooleanField(default=False)
+    deletion_reason = models.TextField()
+    not_spam = models.BooleanField(default=False)
 
     class Meta:
         indexes = [ models.Index(fields=['product', 'user']) ]
@@ -21,6 +24,6 @@ class Comment(models.Model):
     @classmethod
     def get_comments(cls, product:Product, start=0, count=10):
         count, start = int(count), int(start)
-        comments = cls.objects.filter(product=product)[start:start+count]\
+        comments = cls.objects.filter(product=product, deleted=False, not_spam=False)[start:start+count]\
             .values('user__username', 'text', 'sentiment', 'confidence', 'date_posted')
         return create_json(comments, start)

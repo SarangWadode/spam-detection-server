@@ -6,6 +6,7 @@ from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
 from .decorators import login_required
 from .models import Comment, Order, Product
+from .utils import get_sentiment
 
 
 def product_list(request: HttpRequest) -> JsonResponse:
@@ -48,8 +49,19 @@ def add_comment(request: HttpRequest, pk: int) -> JsonResponse:
     if text is None:
         return JsonResponse({ 'error': 'Comment text is required' })
     
-    comment = Comment.objects.create(text=text, user=request.user, product=product)
+    blob = get_sentiment(text)
+
+    comment = Comment.objects.create(
+        text=text, user=request.user, product=product,
+        sentiment=blob[0], confidence=blob[1]
+    )
     comment.save()
+
+    current_active = Comment.objects.filter(user=request.user, product=product, deleted=False, sentiment=blob[0])
+    if blob[0] != 'neutral' and current_active.count() >= settings.MAX_REVIEWS:
+        current_active.update(deleted=True, deletion_reason=f'Multiple {blob[0]} reviews on Product {product.id}')
+        return JsonResponse({ 'error': 'Your reviews has been deleted due to violation of max reviews' })
+
     return JsonResponse({ 'success': 'Comment added successfully' })
 
 def comments(request: HttpRequest, pk: int) -> JsonResponse:
