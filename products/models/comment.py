@@ -21,5 +21,6 @@ class Comment(models.Model):
     @classmethod
     def get_comments(cls, product:Product, start=0, count=10):
         count, start = int(count), int(start)
-        comments = cls.objects.filter(product=product)[start:start+count].values()
+        comments = cls.objects.filter(product=product)[start:start+count]\
+            .values('user__username', 'text', 'sentiment', 'confidence', 'date_posted')
         return create_json(comments, start)

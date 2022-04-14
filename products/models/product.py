@@ -19,11 +19,14 @@ class Product(models.Model):
 
     @property
     def as_json(self):
+        comments = self.comment_set.get_queryset().select_related()[0:5]\
+            .values('user__username', 'text', 'sentiment', 'confidence', 'date_posted')
         return { 
             'title': self.name,
             'description': self.description,
             'pk': self.pk,
-            'image': self.image.url
+            'image': self.image.url,
+            'comments': list(comments)
         }
 
     @classmethod
