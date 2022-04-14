@@ -7,12 +7,19 @@ from .product import Product
 User = get_user_model()
 
 class Comment(models.Model):
-    product_id = models.ForeignKey(Product, on_delete=models.CASCADE)
-    user_id = models.ForeignKey(User, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     sentiment = models.CharField(verbose_name='predicted sentiment', blank=True, null=True, max_length=15)
     confidence = models.FloatField(verbose_name='Confidence of predicted sentiment', blank=True, null=True)
     text = models.TextField()
     date_posted = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        indexes = [ models.Index(fields=['product_id', 'user_id']) ]
+        indexes = [ models.Index(fields=['product', 'user']) ]
+        ordering = ['-date_posted']
+
+    @classmethod
+    def get_comments(cls, product:Product, start=0, count=10):
+        count, start = int(count), int(start)
+        comments = cls.objects.filter(product=product)[start:start+count].values()
+        return create_json(comments, start)
