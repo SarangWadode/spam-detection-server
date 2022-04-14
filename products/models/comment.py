@@ -1,6 +1,6 @@
 from django.contrib.auth import get_user_model
-from django.db import models
 from products.utils import create_json
+from django.db import models
 from .product import Product
 
 
@@ -14,7 +14,7 @@ class Comment(models.Model):
     text = models.TextField()
     date_posted = models.DateTimeField(auto_now_add=True)
     deleted = models.BooleanField(default=False)
-    deletion_reason = models.TextField()
+    deletion_reason = models.TextField(blank=True, null=True)
     not_spam = models.BooleanField(default=False)
 
     class Meta:
