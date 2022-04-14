@@ -12,7 +12,7 @@ class Comment(models.Model):
     sentiment = models.CharField(verbose_name='predicted sentiment', blank=True, null=True, max_length=15)
     confidence = models.FloatField(verbose_name='Confidence of predicted sentiment', blank=True, null=True)
     text = models.TextField()
-    date_posted = models.DateField(auto_now_add=True)
+    date_posted = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         indexes = [ models.Index(fields=['product_id', 'user_id']) ]

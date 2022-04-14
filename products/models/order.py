@@ -12,11 +12,11 @@ User = get_user_model()
 class Order(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    date_created = models.DateField(auto_now_add=True)
+    date_created = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         indexes = [ models.Index(fields=['product', 'user']) ]
-        ordering = ['date_created']
+        ordering = ['-date_created']
     
     @property
     def as_json(self):
