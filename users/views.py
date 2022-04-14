@@ -15,7 +15,6 @@ def login_user(request):
         return JsonResponse({ 'error': 'Missing email or password' })
 
     user = authenticate(request, username=username, password=password)
-    print(username, password,user)
 
     if user is not None:
         login(request, user)
