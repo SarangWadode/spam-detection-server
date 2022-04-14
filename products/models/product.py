@@ -1,6 +1,6 @@
 from django.contrib.auth import get_user_model
 from django.db import models
-from .utils import create_json
+from products.utils import create_json
 
 
 User = get_user_model()
@@ -31,25 +31,3 @@ class Product(models.Model):
         result_query = models.Q(name__icontains=query) | models.Q(description__icontains=query)
         filtered_products = cls.objects.filter(result_query)[start:start + count].values('name', 'image', 'pk')
         return create_json(filtered_products, start)
-
-
-class Comment(models.Model):
-    product_id = models.ForeignKey(Product, on_delete=models.CASCADE)
-    user_id = models.ForeignKey(User, on_delete=models.CASCADE)
-    sentiment = models.CharField(verbose_name='predicted sentiment', blank=True, null=True, max_length=15)
-    confidence = models.FloatField(verbose_name='Confidence of predicted sentiment', blank=True, null=True)
-    text = models.TextField()
-    date_posted = models.DateField(auto_now_add=True)
-
-    class Meta:
-        indexes = [ models.Index(fields=['product_id', 'user_id']) ]
-
-
-class Order(models.Model):
-    product_id = models.ForeignKey(Product, on_delete=models.CASCADE)
-    user_id = models.ForeignKey(User, on_delete=models.CASCADE)
-    date_created = models.DateField(auto_now_add=True)
-
-    class Meta:
-        indexes = [ models.Index(fields=['product_id', 'user_id']) ]
-        ordering = ['-date_created']
