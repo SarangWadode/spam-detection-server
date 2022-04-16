@@ -27,7 +27,7 @@ class CustomUser(AbstractUser):
         total = 0
         unverified_comments = []
         for comment in self.comment_set.filter(deleted=False):
-            orders = self.order_set.filter(product=comment.product).order_by(['date_created'])
+            orders = self.order_set.filter(product=comment.product).order_by('date_created')
             if orders.count() == 0 or orders[0].date_created > comment.date_posted:
                 total += 1
                 unverified_comments.append(comment)
