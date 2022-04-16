@@ -23,7 +23,7 @@ class Product(models.Model):
             .filter(deleted=False, not_spam=False)\
             .select_related()[0:5]\
             .values('user__username', 'text', 'sentiment', 'confidence', 'date_posted')
-        return { 
+        return {
             'title': self.name,
             'description': self.description,
             'pk': self.pk,
@@ -33,6 +33,8 @@ class Product(models.Model):
 
     @classmethod
     def get_products(cls, query='', start=0, count=10):
+        start = int(start)
+        count = int(count)
         result_query = models.Q(name__icontains=query) | models.Q(description__icontains=query)
         filtered_products = cls.objects.filter(result_query)[start:start + count].values('name', 'image', 'pk')
         return create_json(filtered_products, start)

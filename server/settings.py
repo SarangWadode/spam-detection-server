@@ -8,13 +8,15 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = environ.get('SPAM_DJANGO_SECRET_KEY', 'django-insecure-cdp7^pmzk&8h^uzvyv3zb07&w#f!ujbvncsu@@r2c#_^%!f52#')
 
 DEBUG = True
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
+CORS_ALLOWED_ORIGINS = ['http://localhost:3000']
 MAX_REVIEWS = 3
 LIMIT_UNORDERED_REVIEWS = 4
 
 
 # Application definition
 INSTALLED_APPS = [
+    'corsheaders',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -28,13 +30,14 @@ INSTALLED_APPS = [
 AUTH_USER_MODEL = 'users.CustomUser'
 
 MIDDLEWARE = [
+    "corsheaders.middleware.CorsMiddleware",
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware'
 ]
 
 ROOT_URLCONF = 'server.urls'

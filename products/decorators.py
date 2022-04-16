@@ -11,9 +11,9 @@ def login_required(func):
             return func(request, *args, **kwargs)
 
         if bearer is None:
-            return JsonResponse({ 'error': 'No auth token found' })
+            return JsonResponse({ 'error': 'No auth token found', 'logged_out': True })
         if len(bearer.split()) != 2:
-            return JsonResponse({ 'error': 'Invalid token' })
+            return JsonResponse({ 'error': 'Invalid token', 'logged_out': True  })
 
         token = bearer.split()[1]
         try:
@@ -21,6 +21,6 @@ def login_required(func):
             request.user = user
             return func(request, *args, **kwargs)
         except Exception as e:
-            return JsonResponse({ 'error': str(e) })
+            return JsonResponse({ 'error': str(e), 'logged_out': True  })
 
     return inner

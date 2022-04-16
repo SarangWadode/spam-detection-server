@@ -13,7 +13,7 @@ def product_list(request: HttpRequest) -> JsonResponse:
     search = request.GET.get('search', '')
     start = request.GET.get('start', 0)
     count = request.GET.get('count', 10)
-    return JsonResponse({ 
+    return JsonResponse({
         'base_url': request.build_absolute_uri(settings.MEDIA_URL),
         **Product.get_products(search, start, count)
     })
@@ -22,6 +22,18 @@ def product_detail(request: HttpRequest, pk: int) -> JsonResponse:
     product = get_object_or_404(Product, pk=pk)
     data = product.as_json
     return JsonResponse( { **data, 'image': request.build_absolute_uri(data['image']) })
+
+@csrf_exempt
+def add_product(request: HttpRequest) -> JsonResponse:
+    data = request.POST
+    product = Product(
+        name=data.get('name', ''),
+        description=data.get('description', ''),
+        image=data.get('image', '')
+    )
+    product.save()
+    return JsonResponse({ 'message': 'Product added.' })
+
 
 @csrf_exempt
 @login_required
@@ -48,7 +60,7 @@ def add_comment(request: HttpRequest, pk: int) -> JsonResponse:
 
     if text is None:
         return JsonResponse({ 'error': 'Comment text is required' })
-    
+
     blob = get_sentiment(text)
 
     comment = Comment.objects.create(
