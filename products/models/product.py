@@ -11,11 +11,7 @@ class Product(models.Model):
     image = models.ImageField(verbose_name='Product image')
 
     def __str__(self) -> str:
-        return f'''
-            {self.name.center(50)}
-        Image: {self.image}
-        {self.description}
-        '''
+        return self.name
 
     @property
     def as_json(self):

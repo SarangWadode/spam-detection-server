@@ -14,7 +14,7 @@ class CustomUser(AbstractUser):
         data = {
             'id': self.pk,
             'iat': current_time,
-            'exp': current_time + timedelta(minutes=15)
+            'exp': current_time + timedelta(minutes=45)
         }
         return encode(data, settings.SECRET_KEY)
 
