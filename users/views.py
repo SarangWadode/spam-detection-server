@@ -18,7 +18,7 @@ def login_user(request):
 
     if user is not None:
         login(request, user)
-        return JsonResponse({ 'message': 'You are logged in.', 'token': user.token })
+        return JsonResponse({ 'message': 'You are logged in.', 'token': user.token, 'user': user.as_json })
     return JsonResponse({ 'error': 'Invalid credentials.' })
 
 @csrf_exempt
